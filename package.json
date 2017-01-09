@@ -28,5 +28,16 @@
   "bugs": {
     "url": "https://github.com/oklas/join-webpack-plugin/issues"
   },
-  "homepage": "https://github.com/oklas/join-webpack-plugin"
+  "homepage": "https://github.com/oklas/join-webpack-plugin",
+  "devDependencies": {
+    "mocha": "^2.3.3",
+    "should": "^11.1.2",
+    "webpack": "^1.14.0"
+  },
+  "comment": {
+    "webpack": "^2.1.0-beta"
+  },
+  "scripts": {
+    "test": "mocha"
+  }
 }
