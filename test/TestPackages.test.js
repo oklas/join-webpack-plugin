@@ -50,6 +50,7 @@ describe("TestPackages", function() {
           var actualPath = path.join(distDir, file);
           compareFiles(actualPath,filePath);
         });
+
         done();
       });
     });

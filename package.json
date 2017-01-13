@@ -30,9 +30,14 @@
   },
   "homepage": "https://github.com/oklas/join-webpack-plugin",
   "devDependencies": {
+    "json-loader": "^0.5.4",
+    "merge": "^1.2.0",
     "mocha": "^2.3.3",
     "should": "^11.1.2",
     "webpack": "^1.14.0"
+  },
+  "dependencies": {
+    "glob": "^7.1.1"
   },
   "comment": {
     "webpack": "^2.1.0-beta"
