@@ -26,10 +26,14 @@ module.exports = function(source) {
 
   var name = query.name;
 
+  plugin.addSource(source, this.resourcePath);
+
   var content = JSON.stringify(plugin.result);
 
-  this.emitFile(name, content);
-  return "module.exports = __webpack_public_path__ + " + JSON.stringify(name) + ";";
+  name = loaderUtils.interpolateName(
+    this, name || "target.json", { content: content })
 
+  return "module.exports = __webpack_public_path__ + " + JSON.stringify(name) + ";";
 };
+
 module.exports.raw = true;
