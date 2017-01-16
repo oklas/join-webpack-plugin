@@ -1,6 +1,7 @@
 
 //! @file
 //! @date 2017.01.09
+//! @license MIT (in the root of this source tree)
 //! @author Serguei Okladnikov <oklaspec@gmail.com>
 
 var glob = require('glob');
