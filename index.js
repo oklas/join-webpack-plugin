@@ -19,10 +19,9 @@ function JoinPlugin(options) {
     options.searchGlobs = [ options.searchGlobs ];
 
   options.skipPaths = options.skipPaths == null ?
-    options.skipPaths : [];
-
-  if(typeof options.skipPaths === 'string' )
-    options.skipPaths = [ options.skipPaths ];
+    [] : options.skipPaths;
+  options.skipPaths = Array.isArray(options.skipPaths) ?
+    options.skipPaths : [options.skipPaths];
 
   this.sources = []
   this.result = {}
@@ -49,12 +48,24 @@ JoinPlugin.prototype.hash = function (buffer) {
 JoinPlugin.prototype.doPrefetch = function (compiler) {
   var self = this;
   var found = {};
+
   self.options.searchGlobs.forEach(function(item) {
-    glob.sync(item, {cwd: compiler.options.context}).forEach(function(path) {
+    var globOpts = {cwd: compiler.options.context};
+    glob.sync(item, globOpts).forEach(function(path) {
       found[path] = null;
     });
   });
+
   found = Object.keys(found);
+
+  found = found.filter(function(item) {
+    var skip = self.options.skipPaths.filter(function(skipPath) {
+      return skipPath instanceof RegExp ?
+       skipPath.test(item) : item.indexOf(skipPath) !== -1;
+    });
+    return 0 == skip.length;
+  });
+
   found.forEach(function(item){
     compiler.apply(new PrefetchPlugin(item));
   });

@@ -7,14 +7,15 @@ module.exports = {
       {
         test: /\.(json)$/i,
         loaders: [
-          JoinPlugin.loader({a:1})
+          JoinPlugin.loader()
         ]
       }
     ]
   },
   plugins: [
     new JoinPlugin({
-      searchGlobs: './src/**/*.json'
+      searchGlobs: './src/**/*.json',
+      skipPaths: ['skip.json', /\/skipre.json/]
     })
   ]
 };
