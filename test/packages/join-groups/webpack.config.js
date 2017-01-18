@@ -7,7 +7,7 @@ module.exports = {
       {
         test: /\.(json)$/i,
         loaders: [
-          JoinPlugin.loader()
+          JoinPlugin.loader({group:'[name]', name: '[name].[ext]'})
         ]
       }
     ]

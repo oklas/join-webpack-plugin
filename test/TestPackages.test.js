@@ -15,15 +15,16 @@ function fileContent(path) {
   return "";
 }
 
-function compareFiles(actual,expected) {
-  actual = fileContent(actual);
-  expected = fileContent(expected);
+function compareFiles(file_actual,file_expected) {
+  actual = fileContent(file_actual);
+  expected = fileContent(file_expected);
   var eq = actual === expected;
   if( ! eq ) try {
     actual = JSON.parse(actual);
     expected = JSON.parse(expected);
   } catch(e){}
-  actual.should.be.deepEqual(expected, " should be deep eqaual");
+  actual.should.be.deepEqual(expected,
+    " file '"+file_actual+"' should be deep eqaual to '"+file_expected+"'");
 }
 
 describe("TestPackages", function() {
@@ -43,8 +44,8 @@ describe("TestPackages", function() {
       webpack(options, function(err, stats) {
         if(err) return done(err);
         if(stats.hasErrors()) return done(new Error(stats.toString()));
-
         var expectedDirectory = path.join(caseDir, "expected");
+
         fs.readdirSync(expectedDirectory).forEach(function(file) {
           var filePath = path.join(expectedDirectory, file);
           var actualPath = path.join(distDir, file);

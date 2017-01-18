@@ -23,21 +23,36 @@ function JoinPlugin(options) {
   options.skipPaths = Array.isArray(options.skipPaths) ?
     options.skipPaths : [options.skipPaths];
 
-  this.sources = []
-  this.result = {}
-  this.files = {}
-  this.finished_at = ''
+  options.name = options.name || '[name].[hash].[ext]';
+  options.group = options.group || '[name].[ext]';
+  this.groups = {};
 
-  this.id = options.id == null ? ++NEXT_ID : options.id;
   this.options = options;
+  this.id = options.id == null ? ++NEXT_ID : options.id;
 }
 
+JoinPlugin.prototype.group = function(groupName) {
+  if(groupName == null) groupName = "";
+  if(!this.groups[groupName]) {
+    this.groups[groupName] = {
+      modules: [],
+      sources: [],
+      files: [],
+      result: {},
+      finished_path: "",
+      finished_name: ""
+    };
+  }
+  return this.groups[groupName];
+};
 
-JoinPlugin.prototype.addSource = function(source, path) {
+JoinPlugin.prototype.addSource = function(groupName, name, source, path, module) {
+  var group = this.group(groupName);
   var struct = JSON.parse(source);
-  this.result = merge.recursive(this.result, struct);
-  this.files[path] = this.files[path] ? 1+this.files[path] : 1
-  this.finished_at = path;
+  group.result = merge.recursive(group.result, struct);
+  group.files[path] = group.files[path] ? 1+group.files[path] : 1;
+  group.finished_path = path;
+  group.finished_name = name;
 };
 
 
@@ -77,9 +92,11 @@ JoinPlugin.prototype.apply = function (compiler) {
 
   compiler.plugin("this-compilation", function(compilation) {
     compilation.plugin("additional-assets", function(callback) {
-      var file = 'target.json';
-      var content = JSON.stringify(self.result);
-      compilation.assets[file] = new RawSource(content);
+      Object.keys(self.groups).forEach(function(groupName) {
+        var group = self.group(groupName);
+        var content = JSON.stringify(group.result);
+        compilation.assets[group.finished_name] = new RawSource(content);
+      });
       callback();
     });
   });

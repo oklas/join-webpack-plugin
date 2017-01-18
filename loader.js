@@ -24,14 +24,20 @@ module.exports = function(source) {
   if(!plugin)
     throw new Error('associated webpack plugin not found');
 
-  var name = query.name;
-
-  plugin.addSource(source, this.resourcePath);
-
-  var content = JSON.stringify(plugin.result);
+  var name = query.name || plugin.options.name;
+  var groupName = query.group || plugin.options.group;
 
   name = loaderUtils.interpolateName(
-    this, name || "target.json", { content: content })
+    this, name, { content: content });
+
+  if(groupName != null) {
+    groupName = loaderUtils.interpolateName(
+      this, groupName, { content: ''});
+  }
+
+  plugin.addSource(groupName, name, source, this.resourcePath, this._module);
+
+  var content = JSON.stringify(plugin.group(groupName).result);
 
   return "module.exports = __webpack_public_path__ + " + JSON.stringify(name) + ";";
 };
