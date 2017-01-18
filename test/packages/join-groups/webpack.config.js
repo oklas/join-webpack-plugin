@@ -1,4 +1,5 @@
 var JoinPlugin = require("../../../");
+const merge = require("merge");
 
 module.exports = {
   entry: "./index",
@@ -14,7 +15,16 @@ module.exports = {
   },
   plugins: [
     new JoinPlugin({
-      searchGlobs: './src/**/*.json'
+      search: './src/**/*.json',
+      join: function(common, addition) {
+        return merge.recursive(
+          common ? common : {},
+          JSON.parse(addition)
+        );
+      },
+      save: function(common) {
+        return JSON.stringify(common);
+      }
     })
   ]
 };

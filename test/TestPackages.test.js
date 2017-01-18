@@ -40,14 +40,20 @@ describe("TestPackages", function() {
       options.context = caseDir;
       if(!options.output) options.output = { filename: "[name].js" };
       if(!options.output.path) options.output.path = distDir;
+      var expectedDir = path.join(caseDir, "expected");
+
+      fs.readdirSync(expectedDir).forEach(function(file) {
+        var actualPath = path.join(distDir, file);
+        if( fs.existsSync(actualPath) )
+          fs.unlinkSync(actualPath);
+      });
 
       webpack(options, function(err, stats) {
         if(err) return done(err);
         if(stats.hasErrors()) return done(new Error(stats.toString()));
-        var expectedDirectory = path.join(caseDir, "expected");
 
-        fs.readdirSync(expectedDirectory).forEach(function(file) {
-          var filePath = path.join(expectedDirectory, file);
+        fs.readdirSync(expectedDir).forEach(function(file) {
+          var filePath = path.join(expectedDir, file);
           var actualPath = path.join(distDir, file);
           compareFiles(actualPath,filePath);
         });

@@ -1,7 +1,7 @@
 {
   "name": "join-webpack-plugin",
   "version": "0.0.0",
-  "description": "Webpack plugin that make target from joined in a predefined way sources",
+  "description": "Webpack plugin that join togater sources in a predefined way",
   "main": "index.js",
   "scripts": {
     "test": "echo test"

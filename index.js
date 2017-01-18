@@ -5,26 +5,34 @@
 //! @author Serguei Okladnikov <oklaspec@gmail.com>
 
 var glob = require('glob');
-const merge = require("merge"); // TODO: remove
 var PrefetchPlugin = require('webpack').PrefetchPlugin;
 var RawSource = require("webpack-sources").RawSource;
 
 var NEXT_ID = 0;
 
 function JoinPlugin(options) {
-  if(typeof options === 'string')
-    options = { searchGlobs: options };
+  if(typeof options !== 'object' || Array.isArray(options) )
+    throw new Error("options must be object of key:values");
 
-  if(typeof options.searchGlobs === 'string' )
-    options.searchGlobs = [ options.searchGlobs ];
+  if(typeof options.join !== 'function')
+    throw new Error("'join' option must be function");
 
-  options.skipPaths = options.skipPaths == null ?
-    [] : options.skipPaths;
-  options.skipPaths = Array.isArray(options.skipPaths) ?
-    options.skipPaths : [options.skipPaths];
+  if(typeof options.save !== 'function')
+    throw new Error("'save' option must be function");
+
+  if(typeof options.search === 'string' )
+    options.search = [ options.search ];
+
+  if(!Array.isArray(options.search))
+    throw new Error("'search' option must be string or array");
+
+  options.skip = options.skip == null ?
+    [] : options.skip;
+  options.skip = Array.isArray(options.skip) ?
+    options.skip : [options.skip];
 
   options.name = options.name || '[name].[hash].[ext]';
-  options.group = options.group || '[name].[ext]';
+  options.group = options.group || null;
   this.groups = {};
 
   this.options = options;
@@ -38,7 +46,7 @@ JoinPlugin.prototype.group = function(groupName) {
       modules: [],
       sources: [],
       files: [],
-      result: {},
+      result: null,
       finished_path: "",
       finished_name: ""
     };
@@ -48,13 +56,11 @@ JoinPlugin.prototype.group = function(groupName) {
 
 JoinPlugin.prototype.addSource = function(groupName, name, source, path, module) {
   var group = this.group(groupName);
-  var struct = JSON.parse(source);
-  group.result = merge.recursive(group.result, struct);
+  group.result = this.options.join(group.result, source);
   group.files[path] = group.files[path] ? 1+group.files[path] : 1;
   group.finished_path = path;
   group.finished_name = name;
 };
-
 
 JoinPlugin.prototype.hash = function (buffer) {
   return crypto.createHash('md5').update(buffer).digest('hex');
@@ -64,7 +70,7 @@ JoinPlugin.prototype.doPrefetch = function (compiler) {
   var self = this;
   var found = {};
 
-  self.options.searchGlobs.forEach(function(item) {
+  self.options.search.forEach(function(item) {
     var globOpts = {cwd: compiler.options.context};
     glob.sync(item, globOpts).forEach(function(path) {
       found[path] = null;
@@ -74,9 +80,9 @@ JoinPlugin.prototype.doPrefetch = function (compiler) {
   found = Object.keys(found);
 
   found = found.filter(function(item) {
-    var skip = self.options.skipPaths.filter(function(skipPath) {
-      return skipPath instanceof RegExp ?
-       skipPath.test(item) : item.indexOf(skipPath) !== -1;
+    var skip = self.options.skip.filter(function(skip) {
+      return skip instanceof RegExp ?
+       skip.test(item) : item.indexOf(skip) !== -1;
     });
     return 0 == skip.length;
   });
@@ -94,7 +100,7 @@ JoinPlugin.prototype.apply = function (compiler) {
     compilation.plugin("additional-assets", function(callback) {
       Object.keys(self.groups).forEach(function(groupName) {
         var group = self.group(groupName);
-        var content = JSON.stringify(group.result);
+        var content = self.options.save(group.result);
         compilation.assets[group.finished_name] = new RawSource(content);
       });
       callback();

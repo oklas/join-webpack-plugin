@@ -1,4 +1,5 @@
 var JoinPlugin = require("../../../");
+const merge = require("merge");
 
 module.exports = {
   entry: "./index",
@@ -7,15 +8,24 @@ module.exports = {
       {
         test: /\.(json)$/i,
         loaders: [
-          JoinPlugin.loader()
+          JoinPlugin.loader({name: 'result.json'})
         ]
       }
     ]
   },
   plugins: [
     new JoinPlugin({
-      searchGlobs: './src/**/*.json',
-      skipPaths: ['skip.json', /\/skipre.json/]
+      search: './src/**/*.json',
+      skip: ['skip.json', /\/skipre.json/],
+      join: function(common, addition) {
+        return merge.recursive(
+          common ? common : {},
+          JSON.parse(addition)
+        );
+      },
+      save: function(common) {
+        return JSON.stringify(common);
+      }
     })
   ]
 };

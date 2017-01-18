@@ -27,17 +27,17 @@ module.exports = function(source) {
   var name = query.name || plugin.options.name;
   var groupName = query.group || plugin.options.group;
 
-  name = loaderUtils.interpolateName(
-    this, name, { content: content });
-
   if(groupName != null) {
     groupName = loaderUtils.interpolateName(
       this, groupName, { content: ''});
   }
 
-  plugin.addSource(groupName, name, source, this.resourcePath, this._module);
-
   var content = JSON.stringify(plugin.group(groupName).result);
+
+  name = loaderUtils.interpolateName(
+    this, name, { content: content });
+
+  plugin.addSource(groupName, name, source, this.resourcePath, this._module);
 
   return "module.exports = __webpack_public_path__ + " + JSON.stringify(name) + ";";
 };
