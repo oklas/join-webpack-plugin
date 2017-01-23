@@ -3,6 +3,7 @@ const merge = require("merge");
 
 module.exports = {
   entry: "./index",
+  output: { libraryTarget: 'umd' },
   module: {
     loaders: [
       {

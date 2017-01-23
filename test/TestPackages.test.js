@@ -58,6 +58,9 @@ describe("TestPackages", function() {
           compareFiles(actualPath,filePath);
         });
 
+        var bundle = require(path.join(distDir,'bundle.js'));
+        bundle(distDir).should.be.equal('ok');
+
         done();
       });
     });
