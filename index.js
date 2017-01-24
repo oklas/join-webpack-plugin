@@ -4,7 +4,9 @@
 //! @license MIT (in the root of this source tree)
 //! @author Serguei Okladnikov <oklaspec@gmail.com>
 
+var async = require("async");
 var glob = require('glob');
+var loaderUtils = require("loader-utils");
 var PrefetchPlugin = require('webpack').PrefetchPlugin;
 var RawSource = require("webpack-sources").RawSource;
 
@@ -36,6 +38,7 @@ function JoinPlugin(options) {
   this.groups = {};
 
   this.options = options;
+  this.state = 'loading';
   this.id = options.id == null ? ++NEXT_ID : options.id;
 }
 
@@ -43,23 +46,23 @@ JoinPlugin.prototype.group = function(groupName) {
   if(groupName == null) groupName = "";
   if(!this.groups[groupName]) {
     this.groups[groupName] = {
-      modules: [],
-      sources: [],
-      files: [],
+      sources: {},
       result: null,
-      finished_path: "",
-      finished_name: ""
+      filetmpl: this.options.name,
+      filename: "join-webpack-plugin.default"
     };
   }
   return this.groups[groupName];
 };
 
-JoinPlugin.prototype.addSource = function(groupName, name, source, path, module) {
+JoinPlugin.prototype.addSource = function(groupName, source, path, module) {
   var group = this.group(groupName);
-  group.result = this.options.join(group.result, source);
-  group.files[path] = group.files[path] ? 1+group.files[path] : 1;
-  group.finished_path = path;
-  group.finished_name = name;
+  if( this.state === 'loading' ) {
+    group.sources[path] = source;
+    return 'join-webpack-plugin.in.process';
+  } else {
+    return group.filename;
+  }
 };
 
 JoinPlugin.prototype.hash = function (buffer) {
@@ -92,19 +95,68 @@ JoinPlugin.prototype.doPrefetch = function (compiler) {
   });
 };
 
-JoinPlugin.prototype.apply = function (compiler) {
+JoinPlugin.prototype.buildGroup = function(group) {
+  var self = this;
+  var files = Object.keys(group.sources);
+  var result = null;
+  files.forEach(function(file) {
+    result = self.options.join(result, group.sources[file])
+  });
+  group.result = self.options.save(result);
+  group.filename = loaderUtils.interpolateName(
+    this, group.filetmpl, { content: group.result });
+};
+
+JoinPlugin.prototype.apply = function(compiler) {
   var self = this;
   self.doPrefetch(compiler);
 
   compiler.plugin("this-compilation", function(compilation) {
+
+    compilation.plugin("optimize-tree", function(chunks,modules,callback) {
+      self.state = 'building';
+
+      Object.keys(self.groups).forEach(function(groupName) {
+        var group = self.group(groupName);
+        self.buildGroup(group);
+      });
+
+      async.forEach(chunks, function(chunk, callback) {
+        async.forEach(chunk.modules.slice(), function(module, callback) {
+
+          var group = null;
+          Object.keys(self.groups).forEach(function(groupName) {
+            var g = self.group(groupName);
+            if(module.resource in g.sources)
+              group = g;
+          });
+          if( !group ) return callback();
+
+          compilation.rebuildModule(module, function(err) {
+            if(err) compilation.errors.push(err);
+            callback();
+          });
+
+        }, function(err) {
+          if(err) return callback(err);
+          callback();
+        });
+      }, function(err) {
+        if(err) return callback(err);
+        self.state = 'loading';
+        callback();
+      });
+
+    });
+
     compilation.plugin("additional-assets", function(callback) {
       Object.keys(self.groups).forEach(function(groupName) {
         var group = self.group(groupName);
-        var content = self.options.save(group.result);
-        compilation.assets[group.finished_name] = new RawSource(content);
+        compilation.assets[group.filename] = new RawSource(group.result);
       });
       callback();
     });
+
   });
 };
 

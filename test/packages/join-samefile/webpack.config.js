@@ -9,7 +9,7 @@ module.exports = {
       {
         test: /\.(json)$/i,
         loaders: [
-          JoinPlugin.loader({name: 'result.json'})
+          JoinPlugin.loader({name: 'result.[hash].json'})
         ]
       }
     ]

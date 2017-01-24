@@ -8,6 +8,24 @@ var JoinPlugin = require('./index')
 
 var loaderUtils = require("loader-utils");
 
+function namePreTmpl(context, name) {
+  var preTmpl = name;
+  var hashRegex = /\[[^\[]*hash[^\]]*\]/;
+  var hashMatch = name.match(hashRegex);
+  if(hashMatch) {
+    if(hashMatch.length > 1)
+      throw Error('only one hash supported, request feature here:'+
+      'https://github.com/oklas/join-webpack-plugin/issues');
+    hashMatch = hashMatch[0];
+    preTmpl = name.replace(hashRegex, "THE::HASH");
+  }
+  preTmpl = loaderUtils.interpolateName(
+    context, preTmpl, { content: '' });
+  if(hashMatch)
+    preTmpl = preTmpl.replace(/THE::HASH/g, hashMatch);
+  return preTmpl;
+}
+
 module.exports = function(source) {
 
   var query = loaderUtils.parseQuery(this.query);
@@ -32,12 +50,9 @@ module.exports = function(source) {
       this, groupName, { content: ''});
   }
 
-  var content = JSON.stringify(plugin.group(groupName).result);
+  plugin.group(groupName).filetmpl = namePreTmpl(this,name);
 
-  name = loaderUtils.interpolateName(
-    this, name, { content: content });
-
-  plugin.addSource(groupName, name, source, this.resourcePath, this._module);
+  var name = plugin.addSource(groupName, source, this.resourcePath, this._module);
 
   return "module.exports = __webpack_public_path__ + " + JSON.stringify(name) + ";";
 };
