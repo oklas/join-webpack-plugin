@@ -1,6 +1,7 @@
 # join plugin for webpack
 
-This plugin with loader allow join set of files by predefined method.
+This plugin with loader allow to join the set of files by predefined method.
+
 This join produce single asset. The set of files may be splitted
 to group of set of files that produce group of assets.
 The method of joining is defined by specified function.
@@ -11,8 +12,8 @@ The method of joining is defined by specified function.
 - [Requiring](#requiring)
 - [Plugin configuration](#plugin-configuration)
 - [Define joining](#define-joining)
-- [Loader configuration](#oader-configuration)
-- [Groupping](#groupping)
+- [Loader configuration](#loader-configuration)
+- [Grouping](#grouping)
 
 
 ## Install
@@ -91,16 +92,28 @@ var join = new JoinPlugin({
 
 Values is (bold marked is mandatory):
 
-* **`search`** - glob pattern or patterns array to find and prefetch files see [glob](https://www.npmjs.com/package/glob) module for reference
+* **`search`** - glob pattern or patterns array to find and prefetch files
+  see [glob](https://www.npmjs.com/package/glob) module for reference
 * `skip` - substring or regular expression or array to skip some from searched results
 * **`join`** - function that make joining
 * **`save`** - function that produce result for saving to asset
-* `loaderOptions` - default options for loader of this join plugin, loader options described below
+* `loaderOptions` - default options for loader of this join plugin,
+  loader options described below
+
+The `search` param is like multi-require with glob patterns.
+The `search` param is mandatory but may be empty array.
+Only files that requred by `require` function in code
+will be loaded in that case.
+
+Any file that does not match to `search` or `skip` param but same
+time match to loader section in webpack config and required in code
+by function `require` will be loaded and joined anyway.
 
 
 ## Define joining
 
 The joining process need two function `join` and `save`.
+The pure functins is recommented for `join` and `save`.
 
 ### joining
 
