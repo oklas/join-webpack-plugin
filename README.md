@@ -1,10 +1,13 @@
 # join plugin for webpack
 
-This plugin with loader allow to join the set of files by predefined method.
+Webpack plugin with loader that join sources to single asset by predefined method.
 
-This join produce single asset. The set of files may be splitted
-to group of set of files that produce group of assets.
+This plugin produce single asset for set of files. The set of files
+may be splitted to groups of set of files that produce group of assets.
 The method of joining is defined by specified function.
+
+This is more genearl purpose (and more flexible) plugin. Consider to use
+more simple [merge-webpack-plugin](merge-webpack-plugin) instead of this.
 
 
 - [Install](#install)
@@ -37,7 +40,7 @@ module.exports = {
         test: /\.(json)$/i,
         loaders: [
           JoinPlugin.loader(),
-          // some more pre loaders
+          // some preloaders
         ]
       }
     ]
@@ -63,6 +66,7 @@ module.exports = {
 
 ``` javascript
 var url = require("one-of-files.ext");
+
 ```
 
 This will return public url of file with result of joining.
@@ -120,7 +124,7 @@ The pure functins is recommented for `join` and `save`.
 At first is joining itself:
 
 ``` javascript
-function(common, addition)
+join: function(common, addition)
 ```
 
 Params:
@@ -137,7 +141,7 @@ Params:
 After all files is loaded and collected in common place produce result:
 
 ``` javascript
-function(common)
+save: function(common)
 ```
 
 This function have same param as first param of join function - `common`
@@ -170,6 +174,21 @@ var theJoin = new JoinPlugin({...})
 
 ```        
 
+The class function may be used when only one plugin instance
+is passed to config. Therefore it is better to use object
+form instead of class form:
+
+``` javascript
+var theJoin = new JoinPlugin({...})
+
+loaders: [
+  // this form valid only for single plugin instance:
+  JoinPlugin.loader(),
+  // to avoid problems better to use always object form:
+  theJoin.loader(),
+],
+```
+
 Loader function wait hash of configuration options as its param:
 Default values of loader may be specified in plugin configuration
 described above.
@@ -182,7 +201,7 @@ Values is:
 * `name` - same as `group` pattern for specifying destination
   asset file name
 
-Configuration values specified directly in `lodaer()` override
+Configuration values specified directly in `loader()` override
 same values specified as default in plugin configuration.
 
 
