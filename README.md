@@ -1,13 +1,15 @@
 # join plugin for webpack
 
-Webpack plugin with loader that join sources to single asset by predefined method.
+Webpack plugin with loader that join sources by predefined method.
 
-This plugin produce single asset for set of files. The set of files
+This plugin produce single asset for set of files. There are multiple
+assets may be produced with grouping technic. The set of files
 may be splitted to groups of set of files that produce group of assets.
+
 The method of joining is defined by specified function.
 
-This is more genearl purpose (and more flexible) plugin. Consider to use
-more simple [merge-webpack-plugin](merge-webpack-plugin) instead of this.
+This is more general purpose (and more flexible) plugin. Consider to use
+more simple [merge-webpack-plugin](https://github.com/oklas/merge-webpack-plugin) instead of this.
 
 
 - [Install](#install)
