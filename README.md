@@ -1,3 +1,5 @@
+[![npm][npm]][npm-url]
+
 # join plugin for webpack
 
 Webpack plugin with loader that join sources by predefined method.
@@ -8,8 +10,11 @@ may be splitted to groups of set of files that produce group of assets.
 
 The method of joining is defined by specified function.
 
-This is more general purpose (and more flexible) plugin. Consider to use
-more simple [merge-webpack-plugin](https://github.com/oklas/merge-webpack-plugin) instead of this.
+In case where need to merge json data more suitable to use
+[merge-webpack-plugin](https://github.com/oklas/merge-webpack-plugin)
+plugin which use this join plugin.
+The join plugin is more flexible as it allow to predefine method how
+data is actually joined. But it require to specify functions which do joining.
 
 
 - [Install](#install)
@@ -24,7 +29,7 @@ more simple [merge-webpack-plugin](https://github.com/oklas/merge-webpack-plugin
 ## Install
 
 ```bash
-npm install --save-dev join-webpack-plugin
+npm install --save join-webpack-plugin
 ```
 
 
