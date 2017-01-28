@@ -10,10 +10,11 @@ may be splitted to groups of set of files that produce group of assets.
 
 The method of joining is defined by specified function.
 
-In case where need to merge json data more suitable to use
-[merge-webpack-plugin](https://github.com/oklas/merge-webpack-plugin)
-plugin which use this join plugin.
-The join plugin is more flexible as it allow to predefine method how
+In case where need to merge json data (or data loaded from another formats
+as yaml for example) it is more suitable to use
+**[merge-webpack-plugin](https://github.com/oklas/merge-webpack-plugin)**
+plugin which use join plugin.
+This join plugin is more flexible as it allow to predefine method how
 data is actually joined. But it require to specify functions which do joining.
 
 
@@ -246,3 +247,7 @@ in `interpolateName()` from [loader-utils](https://github.com/webpack/loader-uti
 ## LICENSE
 
 #### [MIT](./LICENSE.md)
+
+[npm]: https://img.shields.io/npm/v/join-webpack-plugin.svg
+[npm-url]: https://npmjs.com/package/join-webpack-plugin
+
