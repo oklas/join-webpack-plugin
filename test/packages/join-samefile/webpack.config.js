@@ -3,12 +3,15 @@ const merge = require("merge");
 
 module.exports = {
   entry: "./index",
-  output: { libraryTarget: 'umd' },
+  output: {
+    libraryTarget: 'umd',
+    filename: 'bundle.js'
+  },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.(json)$/i,
-        loaders: [
+        use: [
           JoinPlugin.loader({name: 'result.[hash].json'})
         ]
       }
