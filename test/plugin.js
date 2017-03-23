@@ -25,6 +25,16 @@ describe("plugin options asserts on it", function() {
     }).should.throw(/'save' option must be function/);
   });
 
+  it("does not assert when search omited", function() {
+    var options = {
+      join: function(){},
+      save: function(){}
+    };
+    (function(){
+      plugin(options);
+    }).should.not.throw();
+  });
+
   it("search is not string or array", function() {
     var options = {
       join: function(){},

@@ -22,6 +22,9 @@ function JoinPlugin(options) {
   if(typeof options.save !== 'function')
     throw new Error("'save' option must be function");
 
+  if(!options.search)
+    options.search = [];
+
   if(typeof options.search === 'string' )
     options.search = [ options.search ];
 
@@ -33,7 +36,7 @@ function JoinPlugin(options) {
   options.skip = Array.isArray(options.skip) ?
     options.skip : [options.skip];
 
-  options.name = options.name || '[name].[hash].[ext]';
+  options.name = options.name || '[hash]';
   options.group = options.group || null;
   this.groups = {};
 
