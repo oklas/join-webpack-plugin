@@ -27,26 +27,27 @@
   },
   "homepage": "https://github.com/oklas/join-webpack-plugin",
   "devDependencies": {
-    "async": "^2.1.5",
-    "glob": "^7.1.1",
+    "istanbul": "^0.4.5",
+    "codecov.io": "^0.1.6",
+    "coveralls": "^2.12.0",
     "loader-utils": "^0.2.17",
     "merge": "^1.2.0",
     "mocha": "^2.5.3",
     "should": "^11.2.1",
     "webpack": "^2.3.1",
-    "webpack-sources": "^0.1.5",
     "yaml-loader": "^0.4.0"
   },
   "peerDependencies": {
     "webpack": "1 || ^2 || ^2.1.0-beta || ^2.2.0-rc"
   },
   "dependencies": {
-    "async": "^2.1.4",
+    "async": "^2.1.5",
     "glob": "^7.1.1",
     "loader-utils": "^0.2.16",
-    "webpack-sources": "^0.1.0"
+    "webpack-sources": "^0.1.5"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "cover": "istanbul cover ./node_modules/mocha/bin/_mocha"
   }
 }
