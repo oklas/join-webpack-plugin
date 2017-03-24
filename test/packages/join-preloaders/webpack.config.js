@@ -12,7 +12,7 @@ module.exports = {
       {
         test: /\.(yaml-json)$/i,
         use: [
-          JoinPlugin.loader({group:'[name]', name: '[name].[ext]'}),
+          JoinPlugin.loader(),
           'yaml-loader'
         ]
       }
@@ -21,6 +21,8 @@ module.exports = {
   plugins: [
     new JoinPlugin({
       search: './src/**/*.yaml-json',
+      group:'[name]',
+      name: '[name].[ext]',
       join: function(common, addition) {
         return merge.recursive(
           common ? common : {},

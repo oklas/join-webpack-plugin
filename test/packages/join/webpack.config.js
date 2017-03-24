@@ -19,6 +19,7 @@ module.exports = {
   },
   plugins: [
     new JoinPlugin({
+      id: '1000',
       search: './src/**/*.json',
       skip: ['skip.json', /\/skipre.json/],
       join: function(common, addition) {

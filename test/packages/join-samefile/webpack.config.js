@@ -20,7 +20,7 @@ module.exports = {
   plugins: [
     new JoinPlugin({
       search: './src/**/*.json',
-      skip: ['skip.json', /\/skipre.json/],
+      skip: /\/skipre.json/,
       join: function(common, addition) {
         return merge.recursive(
           common ? common : {},

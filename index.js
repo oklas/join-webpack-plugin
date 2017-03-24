@@ -13,7 +13,7 @@ var RawSource = require("webpack-sources").RawSource;
 var NEXT_ID = 0;
 
 function JoinPlugin(options) {
-  if(typeof options !== 'object' || Array.isArray(options) )
+  if(typeof options !== 'object' )
     throw new Error("options must be object of key:values");
 
   if(typeof options.join !== 'function')
@@ -63,10 +63,6 @@ JoinPlugin.prototype.addSource = function(groupName, source, path, module) {
   } else {
     return group.filename;
   }
-};
-
-JoinPlugin.prototype.hash = function (buffer) {
-  return crypto.createHash('md5').update(buffer).digest('hex');
 };
 
 JoinPlugin.prototype.doPrefetch = function (compiler) {

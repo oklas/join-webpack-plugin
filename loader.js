@@ -10,7 +10,7 @@ var loaderUtils = require("loader-utils");
 
 function namePreTmpl(context, name) {
   var preTmpl = name;
-  var hashRegex = /\[[^\[]*hash[^\]]*\]/;
+  var hashRegex = /\[[^\[]*hash[^\]]*\]/g;
   var hashMatch = name.match(hashRegex);
   if(hashMatch) {
     if(hashMatch.length > 1)
