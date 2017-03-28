@@ -33,7 +33,7 @@ module.exports = function(source) {
   var plugins = this.options.plugins.filter(function(plugin) {
     return plugin instanceof JoinPlugin
   });
-  var plugin = this.options.plugins.filter(function(plugin) {
+  var plugin = plugins.filter(function(plugin) {
     return plugin.id == query.id
   });
   plugin = plugin.length > 0 ? plugin[0] :

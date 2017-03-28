@@ -1,4 +1,5 @@
 var JoinPlugin = require("../../../");
+const webpack = require("webpack");
 const merge = require("merge");
 
 module.exports = {
@@ -29,6 +30,7 @@ module.exports = {
       save: function(common) {
         return JSON.stringify(common);
       }
-    })
+    }),
+    new webpack.optimize.UglifyJsPlugin()
   ]
 };
