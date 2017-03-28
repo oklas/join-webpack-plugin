@@ -1,6 +1,6 @@
 {
   "name": "join-webpack-plugin",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Webpack plugin with loader that join sources by predefined method",
   "main": "index.js",
   "repository": {
